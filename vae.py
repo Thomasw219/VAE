@@ -113,7 +113,6 @@ if __name__ == "__main__":
     mnist_testset = datasets.MNIST(root="../figures", train=False,
             download=True, transform=transforms.ToTensor())
 
-    """
     device = torch.device("cuda:0")
     vae = VAE(embedding_dim)
     vae.to(device)
@@ -143,14 +142,11 @@ if __name__ == "__main__":
 
     torch.save(vae.state_dict(), "./vae_state_dict.pt")
 
-    """
-
     vae = VAE(embedding_dim)
     vae.load_state_dict(torch.load("./vae_state_dict.pt"))
     test_dataloader = DataLoader(mnist_testset, batch_size=1, shuffle=True)
     image_embeddings = [[] for i in range(10)]
 
-    """
     n = 0
     for test_images, test_labels in iter(test_dataloader):
         with torch.no_grad():
@@ -172,8 +168,6 @@ if __name__ == "__main__":
     plt.legend()
     plt.savefig("../figures/vae_embedding_space.png")
 
-    """
-
     p1 = np.array([-0.7435723, 0.19734043, 1.297068])
     p2 = np.array([1.2224902, -0.4694287, -0.36215362])
 
@@ -189,7 +183,6 @@ if __name__ == "__main__":
             fig.savefig("../figures/vae_traversal_{:02}.png".format(i))
             plt.close(fig)
 
-    """
     k = 0
     for test_images, test_labels in iter(test_dataloader):
         plt.imshow(np.clip(test_images.cpu().detach().numpy(), 0, 1).reshape((28, 28)))
@@ -201,4 +194,3 @@ if __name__ == "__main__":
         k += 1
         if k >= 50:
             break
-    """
