@@ -102,18 +102,22 @@ import matplotlib.pyplot as plt
 def save_original_and_reconstruction(image, vae, update):
     reconstruction = vae.forward(image)
     plt.imshow(image.cpu().detach().numpy().reshape((28, 28)))
-    plt.savefig("../figures/vae_train_{:04d}_original.png".format(update))
+    plt.savefig("./figures/vae_train_{:04d}_original.png".format(update))
     plt.imshow(np.clip(reconstruction.cpu().detach().numpy().reshape((28, 28)), 0, 1))
-    plt.savefig("../figures/vae_train_{:04d}_reconstruction.png".format(update))
+    plt.savefig("./figures/vae_train_{:04d}_reconstruction.png".format(update))
 
 if __name__ == "__main__":
     embedding_dim = 3
-    mnist_trainset = datasets.MNIST(root="../figures", train=True,
+    mnist_trainset = datasets.MNIST(root="./data", train=True,
             download=True, transform=transforms.ToTensor())
-    mnist_testset = datasets.MNIST(root="../figures", train=False,
+    mnist_testset = datasets.MNIST(root="./data", train=False,
             download=True, transform=transforms.ToTensor())
 
-    device = torch.device("cuda:0")
+    if torch.cuda.is_available():
+        device = torch.device("cuda:0")
+    else:
+        device = torch.device("cpu")
+
     vae = VAE(embedding_dim)
     vae.to(device)
     optimizer = optim.Adam(vae.parameters(), lr=0.0001)
@@ -166,7 +170,7 @@ if __name__ == "__main__":
         ax.scatter(embeddings[:,0], embeddings[:,1], embeddings[:,2], label=str(i))
 
     plt.legend()
-    plt.savefig("../figures/vae_embedding_space.png")
+    plt.savefig("./figures/vae_embedding_space.png")
 
     p1 = np.array([-0.7435723, 0.19734043, 1.297068])
     p2 = np.array([1.2224902, -0.4694287, -0.36215362])
@@ -180,7 +184,7 @@ if __name__ == "__main__":
             ax.set_axis_off()
             fig.add_axes(ax)
             ax.imshow(image)
-            fig.savefig("../figures/vae_traversal_{:02}.png".format(i))
+            fig.savefig("./figures/vae_traversal_{:02}.png".format(i))
             plt.close(fig)
 
     k = 0
@@ -190,7 +194,7 @@ if __name__ == "__main__":
         with torch.no_grad():
             image = vae.forward(test_images)
         plt.imshow(np.clip(image.cpu().detach().numpy(), 0, 1).reshape((28, 28)))
-        plt.savefig("../figures/vae_test_{:02}_reconstruction.png".format(k))
+        plt.savefig("./figures/vae_test_{:02}_reconstruction.png".format(k))
         k += 1
         if k >= 50:
             break
